@@ -1,0 +1,15 @@
+@using Sitecore.Mvc
+<!DOCTYPE html>
+<!--[if IE 9]><html lang="@Sitecore.Context.Site.Language" class="no-js ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="@Sitecore.Context.Site.Language" class=" no-js">
+<!--<![endif]-->
+<body ontouchstart="">
+    <div class="viewport> 
+        <main>
+            @Html.Sitecore().Placeholder(Sitecore.Context.Item["PlaceholderName"])
+        </main>
+    </div>
+</body>
+
+</html>
