@@ -53,7 +53,7 @@ namespace BoC.Sitecore.CompositeComponents.Controllers
                     {
                         if (hasDataSource)
                         {
-                            UrlString webSiteUrl = SiteContext.GetWebSiteUrl();
+                            UrlString webSiteUrl = SiteContext.GetWebSiteUrl(global::Sitecore.Context.ContentDatabase ?? global::Sitecore.Context.Database);
                             webSiteUrl.Add("sc_mode", "edit");
                             webSiteUrl.Add("sc_itemid", pageContext.Item.ID.ToString());
                             webSiteUrl.Add("sc_lang", pageContext.Item.Language.ToString());

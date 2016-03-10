@@ -2,3 +2,4 @@ lib/Sitecore/*
 packages/*
 src/bin/*
 src/obj/*
+src/*.nupkg
