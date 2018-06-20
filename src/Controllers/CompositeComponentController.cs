@@ -13,6 +13,8 @@ namespace BoC.Sitecore.CompositeComponents.Controllers
 {
     public class CompositeComponentController : Controller
     {
+        private const string CompositeComponentInstanceTemplateId = "{14F4886E-D0A8-4E9C-9EE6-2C7F36C251AC}";
+
         public ActionResult EditLayout()
         {
             var pageContext = PageContext.CurrentOrNull;
@@ -32,10 +34,11 @@ namespace BoC.Sitecore.CompositeComponents.Controllers
             if (renderingContext == null)
                 throw new ApplicationException("Could not find current rendering context, aborting");
             var hasDataSource = !string.IsNullOrWhiteSpace(renderingContext.Rendering.DataSource);
+            var dataSourceItem = hasDataSource ? renderingContext.Rendering.Item : null;
             var pageContext = new PageContext()
             {
                 RequestContext = this.ControllerContext.RequestContext,
-                Item = !hasDataSource ? null : renderingContext.Rendering.Item
+                Item = dataSourceItem
             };
             var oldDisplayMode = global::Sitecore.Context.Site != null ? global::Sitecore.Context.Site.DisplayMode : DisplayMode.Normal;
             try
@@ -82,8 +85,16 @@ namespace BoC.Sitecore.CompositeComponents.Controllers
 
                         }
                     }
-                    if (hasDataSource)
-                        PipelineService.Get().RunPipeline<RenderPlaceholderArgs>("mvc.renderPlaceholder", new RenderPlaceholderArgs(pageContext.Item["PlaceholderName"] ?? "compositecontent", (TextWriter) stringWriter, new ContentRendering()));
+
+                    if (hasDataSource && dataSourceItem != null &&
+                        dataSourceItem?.TemplateID == new global::Sitecore.Data.ID(CompositeComponentInstanceTemplateId) &&
+                        !string.IsNullOrEmpty(pageContext.Item?["PlaceholderName"]))
+                    {
+                        PipelineService.Get().RunPipeline<RenderPlaceholderArgs>("mvc.renderPlaceholder",
+                            new RenderPlaceholderArgs(pageContext.Item["PlaceholderName"],
+                                (TextWriter)stringWriter, new ContentRendering()));
+                    }
+
                     return Content(stringWriter.ToString());
                 }
             }
